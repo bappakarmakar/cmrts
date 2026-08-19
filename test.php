@@ -18,4 +18,5 @@
   # Call function 
   
   get_all_directory_and_files('C:\xampp\htdocs\cmrts');
+  // test Data
 ?>
