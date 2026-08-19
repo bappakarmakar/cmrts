@@ -1,0 +1,898 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed' );
+
+class Address_list_model extends CI_Model
+{
+    public function __construct()
+    { 
+      parent::__construct(); 
+    }
+
+    public function incident_list_reporting_details()
+    {   
+        $stake_holder_id_fk = $this->session->userdata('stake_holder_login_id_pk');
+
+        $district = $this->session->userdata('district');
+
+        $block = $this->session->userdata('block');
+
+        $subdiv = $this->session->userdata('subdiv');
+
+        // echo 123;die;
+        if($this->session->userdata('stake_id_fk') == '4' || $this->session->userdata('stake_id_fk') == '2'){
+            $query = $this->db->query("select inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date,inc.marriage_date, inc.street_landmark, inc.ward_gp,
+            inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+            block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+            inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+            inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+            inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+            inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+            block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+            inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+            inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+            cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+            cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+            district_location_master_description(cp1.cp_district) AS cp_1_district,
+            block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+            cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+            gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+            cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+            cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+            cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+            cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+            cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+            cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+            cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+            cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+            cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+            cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+            district_location_master_description(cp2.cp_district) AS cp_2_district,
+            block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+            cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+            gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+            cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+            cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+            cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+            cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+            cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+            cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+            cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+            cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+            from cm_incident_report inc
+            left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+            and cp1.cp_type = 1
+            left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+            and cp2.cp_type = 2
+            where incident_id_pk in(
+            SELECT incident_id_pk FROM cm_incident_report AS cmir
+            LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+            left join cm_incident_report_cp_address_details as cp_address on cmircpo.cp_id_pk = cp_address.cp_id_fk
+            WHERE cmir.delete_status = '0' and cmir.created_at is not null and
+                (
+                    (cmir.district = '".$district."' AND cmir.block = '".$block."' AND cmir.current_status in(2,3,4)) 
+
+                    OR (cmircpo.cp_district = '".$district."' and cmircpo.cp_block = '".$block."' AND cmir.current_status in(3,4))
+                    
+                    OR (cp_address.district = '".$district."' and cp_address.block = '".$block."' AND cmir.current_status in(3,4))
+
+                    OR (cmir.district = '".$district."' AND cmir.block = '".$block."' AND cmir.current_status in(1) AND cmir.stake_holder_id_fk = '".$stake_holder_id_fk."')
+                )
+            )")->result();
+        }elseif($this->session->userdata('stake_id_fk') == '3'){
+            $query = $this->db->query("select inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date,inc.marriage_date, inc.street_landmark, inc.ward_gp,
+            inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+            block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+            inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+            inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+            inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+            inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+            block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+            inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+            inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+            cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+            cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+            district_location_master_description(cp1.cp_district) AS cp_1_district,
+            block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+            cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+            gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+            cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+            cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+            cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+            cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+            cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+            cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+            cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+            cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+            cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+            cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+            district_location_master_description(cp2.cp_district) AS cp_2_district,
+            block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+            cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+            gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+            cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+            cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+            cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+            cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+            cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+            cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+            cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+            cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+            from cm_incident_report inc
+            left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+            and cp1.cp_type = 1
+            left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+            and cp2.cp_type = 2
+            where incident_id_pk in(
+            SELECT incident_id_pk FROM cm_incident_report AS cmir
+            LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+            WHERE cmir.delete_status = '0' and cmir.created_at is not null and
+                (
+                    (cmir.district = '".$district."' and cmir.current_status in(2,3,4)) 
+
+                    OR (cmircpo.cp_district = '".$district."' and cmir.current_status in(3,4))
+                    
+                    OR (cmir.district = '".$district."' and cmir.current_status in(1) and cmir.stake_holder_id_fk = '".$stake_holder_id_fk."')
+                )
+            )")->result();
+        }elseif($this->session->userdata('stake_id_fk') == '1' || $this->session->userdata('stake_id_fk') == '5'){
+            if($district != ''){
+                $query = $this->db->query("select inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date,inc.marriage_date, inc.street_landmark, inc.ward_gp,
+                inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+                block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+                inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+                inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+                inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+                inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+                block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+                inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+                inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+                cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+                cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+                district_location_master_description(cp1.cp_district) AS cp_1_district,
+                block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+                cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+                gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+                cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+                cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+                cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+                cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+                cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+                cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+                cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+                cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+                cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+                cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+                district_location_master_description(cp2.cp_district) AS cp_2_district,
+                block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+                cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+                gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+                cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+                cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+                cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+                cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+                cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+                cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+                cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+                cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+                from cm_incident_report inc
+                left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+                and cp1.cp_type = 1
+                left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+                and cp2.cp_type = 2
+                where incident_id_pk in(
+                SELECT incident_id_pk FROM cm_incident_report AS cmir
+                LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+                WHERE cmir.delete_status = '0' and cmir.current_status !=1 and
+                    (
+                        (cmir.district = '".$district."' and cmir.current_status in(1,2,3,4)) 
+
+                        OR (cmircpo.cp_district = '".$district."' and cmir.current_status in(3,4))
+                    )
+                )")->result();
+             }elseif($district == ''){
+                $query = $this->db->query("select inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date,inc.marriage_date, inc.street_landmark, inc.ward_gp,
+                inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+                block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+                inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+                inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+                inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+                inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+                block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+                inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+                inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+                cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+                cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+                district_location_master_description(cp1.cp_district) AS cp_1_district,
+                block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+                cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+                gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+                cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+                cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+                cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+                cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+                cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+                cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+                cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+                cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+                cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+                cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+                district_location_master_description(cp2.cp_district) AS cp_2_district,
+                block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+                cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+                gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+                cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+                cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+                cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+                cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+                cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+                cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+                cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+                cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+                from cm_incident_report inc
+                left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+                and cp1.cp_type = 1
+                left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+                and cp2.cp_type = 2
+                where incident_id_pk in(
+                SELECT incident_id_pk FROM cm_incident_report AS cmir
+                LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+                WHERE cmir.delete_status = '0' and cmir.current_status !=1 and cmir.current_status in(1,2,3,4))")->result();
+             }
+        }elseif($this->session->userdata('stake_id_fk') == '6'){
+            $query = $this->db->query("select block_master.rural_urban, inc.stake_holder_id_fk, inc.incident_id_pk, inc.marriage_date, inc.incident_date, inc.street_landmark, inc.ward_gp,
+            inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+            block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+            inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+            inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+            inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+            inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+            block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+            inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+            inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+            cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+            cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+            district_location_master_description(cp1.cp_district) AS cp_1_district,
+            block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+            cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+            gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+            cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+            cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+            cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+            cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+            cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+            cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+            cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+            cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+            cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+            cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+            district_location_master_description(cp2.cp_district) AS cp_2_district,
+            block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+            cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+            gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+            cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+            cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+            cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+            cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+            cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+            cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+            cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+            cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+            from cm_incident_report inc
+            left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+            and cp1.cp_type = 1
+            left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+            and cp2.cp_type = 2
+
+            left join rp_location_master_block as block_master on inc.block = block_master.block_id_pk
+
+            where incident_id_pk in(
+            SELECT incident_id_pk FROM cm_incident_report AS cmir
+            LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+            left join cm_incident_report_cp_address_details as cp_address on cmircpo.cp_id_pk = cp_address.cp_id_fk
+
+            
+
+            WHERE cmir.delete_status = '0' and cmir.created_at is not null and
+                (
+                    (cmir.district = '".$district."' AND cmir.block in (select block_id_pk from rp_location_master_block where subdiv_id_fk = '".$subdiv."') AND cmir.current_status in(2,3,4)) 
+
+                    OR (cmircpo.cp_district = '".$district."' and cmircpo.cp_block in (select block_id_pk from rp_location_master_block where subdiv_id_fk = '".$subdiv."') AND cmir.current_status in(3,4))
+                    
+                    OR (cp_address.district = '".$district."' and cp_address.block in (select block_id_pk from rp_location_master_block where subdiv_id_fk = '".$subdiv."') AND cmir.current_status in(3,4))
+                )
+            )")->result();
+        }
+        // print_r($this->db->last_query());die;
+        return $query;
+    }
+    public function update_address_change_details($updateData,$sl_no){
+        $default = $this->load->database('default',TRUE);
+        $default->where('sl_no', $sl_no)
+           ->update('cm_incident_report_cp_address_details',$updateData);
+        //print $default->last_query();die();
+        return $default->affected_rows();
+    }
+    /*public function contracting_parties_archive_details_by_id($stake_holder_login_id_pk){
+      $default = $this->load->database('default',TRUE);
+      $query = $default->select("*")
+      ->from("cm_incident_report_contracting_parties_archive as a")
+      ->where('archive_by', $stake_holder_login_id_pk)
+      ->get();
+      //print $default->last_query();
+      return $query->result();
+    }
+*/
+    public function contracting_parties_archive_details_by_id($stake_holder_login_id_pk)
+    {
+        $block = $this->session->userdata('block');
+        $query = $this->db->query("select * FROM cm_incident_report_contracting_parties_archive AS A  LEFT JOIN public.cm_incident_report AS G ON A.incident_id_fk = G.incident_id_pk WHERE A.archive_by = $stake_holder_login_id_pk")->result();
+        return $query;
+    }
+
+
+
+
+
+    public function update_contracting_parties_details($updateData,$cp_id_fk){
+        $default = $this->load->database('default',TRUE);
+        $default->where('cp_id_pk', $cp_id_fk)
+           ->update('cm_incident_report_contracting_parties',$updateData);
+        //print $default->last_query();die();
+        return $default->affected_rows();
+    }
+    public function contracting_parties_archive_by_id($cp_id_pk){
+        $default = $this->load->database('default',TRUE);
+        $stake_holder_login_id_pk = $this->session->userdata('stake_holder_login_id_pk');
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $archive_query = "insert into cm_incident_report_contracting_parties_archive(cp_id_pk,reporting_id,incident_id_fk,cp_type,cp_name,cp_street_landmark,cp_state,cp_district,cp_block,cp_ward_gp,cp_address,cp_pin_code,cp_police_station,cp_phone_no,cp_gender,cp_social_category,cp_religion,cp_dob,cp_age,cp_dob_document_available,cp_dob_document_id,cp_dob_document_type,cp_identity_document_available,cp_identity_document_id,cp_identity_document_type,cp_highest_educational_attainment,cp_father_name,cp_father_mobile_no,cp_father_id,cp_father_id_type,cp_father_alive,cp_mother_name,cp_mother_mobile_no,cp_mother_id,cp_mother_id_type,cp_mother_alive,created_at,updated_at,created_ip,updated_ip,archive_by,archive_ip,archive_time)
+        (select cp_id_pk,reporting_id,incident_id_fk,cp_type,cp_name,cp_street_landmark,cp_state,cp_district,cp_block,cp_ward_gp,cp_address,cp_pin_code,cp_police_station,cp_phone_no,cp_gender,cp_social_category,cp_religion,cp_dob,cp_age,cp_dob_document_available,cp_dob_document_id,cp_dob_document_type,cp_identity_document_available,cp_identity_document_id,cp_identity_document_type,cp_highest_educational_attainment,cp_father_name,cp_father_mobile_no,cp_father_id,cp_father_id_type,cp_father_alive,cp_mother_name,cp_mother_mobile_no,cp_mother_id,cp_mother_id_type,cp_mother_alive,created_at,updated_at,created_ip,updated_ip,'".$stake_holder_login_id_pk."','".$ip."',NOW() from cm_incident_report_contracting_parties where cp_id_pk='".$cp_id_pk."')";
+        $query = $default->query($archive_query);
+        return $default->affected_rows();
+    }
+    
+    public function forward_reporting_details_update($incident_id)
+    {
+        // $data = array(
+        //   'forward_status' => 102
+        // );
+        $this->db->where('incident_id_pk', $incident_id)->update('cm_incident_report', array("current_status" => 2));
+
+        $query = $this->db->select('cmir.district, cmir.block, lmb.district_id_fk, lmb.subdiv_id_fk, lmb.clucd, lmb.rural_urban, cmir.reporting_id')
+        ->from('cm_incident_report AS cmir')
+        ->join('rp_location_master_block AS lmb', 'cmir.district = lmb.district_id_fk AND cmir.block = lmb.block_id_pk')
+        ->where('cmir.incident_id_pk' , $incident_id)
+        ->get()->row();
+
+        if($query->rural_urban == 'U'){
+            $query_2 = $this->db->select('shl.stake_holder_login_id_pk, shl.stake_id_fk')
+            ->from('cm_stake_holder_login AS shl')
+            ->where('shl.district' , $query->district_id_fk)
+            ->where('shl.subdiv' , $query->subdiv_id_fk)
+            ->where('shl.stake_id_fk' , 6)
+            ->get()->row();
+        }else{
+             $query_2 = $this->db->select('shl.stake_holder_login_id_pk, shl.stake_id_fk')
+            ->from('cm_stake_holder_login AS shl')
+            ->where('shl.district' , $query->district)
+            ->where('shl.block' , $query->block)
+            ->where('shl.stake_id_fk' , 2)
+            ->get()->row();
+        }
+
+        $receiver_by = $query_2->stake_holder_login_id_pk;
+        $message = 'Incident ID:'.$query->reporting_id.' '.'Forwarded by DEO';
+        $page_link = base_url()."admin/reporting/incident/incident_list";
+
+        $uploaded_notification_details = array(
+          'sender_by' => $this->session->userdata('stake_holder_login_id_pk'),
+          'receiver_by' => $receiver_by,
+          'page_link' => $page_link,
+          'message' => $message,
+          'sending_time' => date('Y-m-d H:i:s'),
+          'status' => 0
+        );
+        $result = $this->db->insert('cm_notification_details', $uploaded_notification_details);
+
+        $uploaded_forward_track_details = array(
+          'incident_id_fk' => $incident_id,
+          'deo_stake_holder_id_fk' => $this->session->userdata('stake_holder_login_id_pk'),
+          'bdo_sdo_stake_id_fk' => $query_2->stake_holder_login_id_pk,
+          'created_at' => date('Y-m-d H:i:s'),
+          'created_ip' => $_SERVER['REMOTE_ADDR']
+        );
+        $result = $this->db->insert('cm_incident_report_forward_tracks_details', $uploaded_forward_track_details);
+
+    }
+
+    public function publish_incident_reporting_details_update($incident_id)
+    {
+        $cp_one_query = $this->db->select('cp1.cp_district, cp1.cp_block, lmb.district_id_fk, lmb.block_id_pk, lmb.subdiv_id_fk, lmb.clucd, lmb.rural_urban')
+            ->from('cm_incident_report_contracting_parties as cp1')
+            ->join('rp_location_master_block as lmb', 'cp1.cp_district = lmb.district_id_fk AND cp1.cp_block = lmb.block_id_pk')
+            ->where('cp1.incident_id_fk' , $incident_id)
+            ->where('cp1.cp_type' , 1)
+            ->get()->row();
+
+            // print_r($this->db->last_query());die;
+
+
+
+        if($cp_one_query->rural_urban == 'U'){
+            $cp_one_stake_id_query = $this->db->select('shl.stake_holder_login_id_pk')
+                ->from('cm_stake_holder_login AS shl')
+                ->where('shl.district', $cp_one_query->district_id_fk)
+                ->where('shl.subdiv', $cp_one_query->subdiv_id_fk)
+                ->where('shl.stake_holder_details' , 'DEO')
+                ->get()->row();
+        }else{
+            $cp_one_stake_id_query = $this->db->select('shl.stake_holder_login_id_pk')
+                ->from('cm_stake_holder_login AS shl')
+                ->where('shl.district', $cp_one_query->district_id_fk)
+                ->where('shl.block', $cp_one_query->block_id_pk)
+                ->where('shl.stake_holder_details' , 'DEO')
+                ->get()->row();
+        }
+
+        $cp_two_query = $this->db->select('cp2.cp_district, cp2.cp_block, lmb.district_id_fk, lmb.block_id_pk, lmb.subdiv_id_fk, lmb.clucd, lmb.rural_urban')
+            ->from('cm_incident_report_contracting_parties as cp2')
+            ->join('rp_location_master_block as lmb', 'cp2.cp_district = lmb.district_id_fk AND cp2.cp_block = lmb.block_id_pk')
+            ->where('cp2.incident_id_fk' , $incident_id)
+            ->where('cp2.cp_type' , 2)
+            ->get()->row();
+        $cp_two_result_data = null; 
+       if(!empty($cp_two_query))
+       {
+            if($cp_two_query->rural_urban == 'U'){
+                $cp_two_stake_id_query = $this->db->select('shl.stake_holder_login_id_pk')
+                    ->from('cm_stake_holder_login AS shl')
+                    ->where('shl.district', $cp_two_query->district_id_fk)
+                    ->where('shl.subdiv', $cp_two_query->subdiv_id_fk)
+                    ->where('shl.stake_holder_details' , 'DEO')
+                    ->get()->row();
+            }else{
+                $cp_two_stake_id_query = $this->db->select('shl.stake_holder_login_id_pk')
+                    ->from('cm_stake_holder_login AS shl')
+                    ->where('shl.district', $cp_two_query->district_id_fk)
+                    ->where('shl.block', $cp_two_query->block_id_pk)
+                    ->where('shl.stake_holder_details' , 'DEO')
+                    ->get()->row();
+            }
+           
+        $cp_two_result_data = !empty($cp_two_stake_id_query)? $cp_two_stake_id_query->stake_holder_login_id_pk : NULL;
+        }
+        $cp_one_result_data = !empty ($cp_one_stake_id_query)? $cp_one_stake_id_query->stake_holder_login_id_pk : NULL;
+
+   
+
+        $uploaded_incident_publish_track_details = array(
+            'incident_id_fk' => $incident_id,
+            'bdo_stake_holder_id_fk' => $this->session->userdata('stake_holder_login_id_pk'),
+            'deo_cp_one_stake_id_fk' => $cp_one_result_data,
+            'deo_cp_two_stake_id_fk' => empty($cp_two_result_data) ? null : $cp_two_result_data,
+            'created_at' => date('Y-m-d H:i:s'),
+            'created_ip' => $_SERVER['REMOTE_ADDR']
+        );
+
+        $this->db->where('incident_id_pk', $incident_id)->update('cm_incident_report', array("current_status" => 3));
+
+        $result = $this->db->insert('cm_incident_report_publish_track_details', $uploaded_incident_publish_track_details);
+
+        $stake_id_array = array($cp_one_result_data, $cp_two_result_data);
+
+        $incident_report = $this->db->select('reporting_id')
+            ->from('cm_incident_report')
+            ->where('incident_id_pk' , $incident_id)
+            ->get()->row();
+
+        if($this->session->userdata('stake_id_fk') == '2'){
+           $message = 'Incident ID:'.$incident_report->reporting_id.' '.'Published by BDO';
+        }elseif($this->session->userdata('stake_id_fk') == '6'){
+           $message = 'Incident ID:'.$incident_report->reporting_id.' '.'Published by SDO';
+        }elseif($this->session->userdata('stake_id_fk') == '3'){
+           $message = 'Incident ID:'.$incident_report->reporting_id.' '.'Published by CMPO';
+        }
+
+        $page_link = base_url()."admin/reporting/incident/incident_list";
+
+        if($cp_one_result_data != $cp_two_result_data){
+            for ($i=0; $i < count($stake_id_array); $i++) { 
+                $uploaded_notification_details = array(
+                   'sender_by' => $this->session->userdata('stake_holder_login_id_pk'),
+                   'receiver_by' => $stake_id_array[$i],
+                   'page_link' => $page_link,
+                   'message' => $message,
+                   'sending_time' => date('Y-m-d H:i:s'),
+                   'status' => 0
+                );
+                $result = $this->db->insert('cm_notification_details', $uploaded_notification_details);
+            }
+        }else{
+            $uploaded_notification_details = array(
+                'sender_by' => $this->session->userdata('stake_holder_login_id_pk'),
+                'receiver_by' => $cp_two_result_data,
+                'page_link' => $page_link,
+                'message' => $message,
+                'sending_time' => date('Y-m-d H:i:s'),
+                'status' => 0
+            );
+            $result = $this->db->insert('cm_notification_details', $uploaded_notification_details);
+        }
+    }
+
+    public function cp_one_gender_value($incident_id)
+    {
+        $query = $this->db->select('cpone.cp_one_gender')
+            ->from('cm_incident_report_contracting_party_one AS cpone')
+            ->where('cpone.incident_id_fk' , $incident_id)
+            ->get()->row();
+        return $query->cp_one_gender;
+    }
+
+    public function cp_two_gender_value($incident_id)
+    {
+        $query = $this->db->select('cptwo.cp_two_gender')
+            ->from('cm_incident_report_contracting_party_two AS cptwo')
+            ->where('cptwo.incident_id_fk', $incident_id)
+            ->get()->row();
+        return $query->cp_two_gender;
+    }
+
+    public function cp_cci_value($district_value, $cp_gender)
+    {
+        if($cp_gender == '1'){
+          $query = $this->db->query("SELECT sl_no, cci_name FROM cm_cci_details WHERE (boys_status = '1' OR both_status = '1') AND active_status = 1 AND district_id_fk = $district_value");
+        }elseif($cp_gender == '2'){
+          $query = $this->db->query("SELECT sl_no, cci_name FROM cm_cci_details WHERE (girls_status = '1' OR both_status = '1') AND active_status = 1 AND district_id_fk = $district_value");
+        }
+        return $query->result_array(); 
+    }
+
+    public function Update_Transfer_CCI_Details($incident_id)
+    {
+        $this->db->where('incident_id_pk', $incident_id)->update('cm_incident_report', array("current_status" => 4));
+
+        $incident_details_query = $this->db->select('district, reporting_id')
+        ->from('cm_incident_report')
+        ->where('incident_id_pk' , $incident_id)
+        ->get()->row();
+
+        $query = $this->db->select('stake_holder_login_id_pk')
+        ->from('cm_stake_holder_login')
+        ->where('district', $incident_details_query->district)
+        ->where('stake_id_fk' , 3)
+        ->get()->row();
+
+        $message = 'Incident ID:'.$incident_details_query->reporting_id.' '.'Child transfer request to CWC.';
+        $page_link = base_url()."admin/reporting/incident/incident_list";
+        $uploaded_notification_details = array(
+           'sender_by' => $this->session->userdata('stake_holder_login_id_pk'),
+           'receiver_by' => $query->stake_holder_login_id_pk,
+           'page_link' => $page_link,
+           'message' => $message,
+           'sending_time' => date('Y-m-d H:i:s'),
+           'status' => 0
+        );
+        $result = $this->db->insert('cm_notification_details', $uploaded_notification_details);
+    }
+
+    // public function incident_download_details($incident_id)
+    // {
+    //     $query = $this->db->query("SELECT cmir.stake_holder_id_fk, cmir.incident_id_pk, cmir.incident_date, cmir.street_landmark, cmir.ward_gp, cmir.state, district_location_master_description(cmir.district) AS incident_district, block_location_master_description(cmir.block) AS incident_block, cmir.pin_code, cmir.police_station, marriage_details_master_description(cmir.marriage_details) AS marriage_details, cmir.cp_one_age, cmir.cp_two_age, prevented_master_description(cmir.prevented_details) AS prevented_details, location_description_master_description(cmir.location_description) AS location_description, cmir.anonymous, cmir.identity_known_name, cmir.identity_street_landmark, cmir.identity_ward_gp, cmir.identity_state, district_location_master_description(cmir.identity_district) AS identity_district, block_location_master_description(cmir.identity_block) AS identity_block, cmir.identity_pin_code, cmir.identity_police_station, cmir.identity_phone_no, information_received_master_description(cmir.information_received) AS information_received, cmir.forward_status, cmir.publish_status, cmir.deo_cp_one_stake_id_fk, cmir.deo_cp_two_stake_id_fk, cmir.home_visit_minor_status, cmir.home_visit_adult_status, cmir.follow_up_visit_status, cmir.reporting_id, cmircpo.cp_one_name, cmircpo.cp_one_street_landmark, cmircpo.cp_one_ward_gp, cmircpo.cp_one_state, district_location_master_description(cmircpo.cp_one_district) AS cp_one_district, block_location_master_description(cmircpo.cp_one_block) AS cp_one_block, cmircpo.cp_one_pin_code, cmircpo.cp_one_police_station, cmircpo.cp_one_phone_no, gender_master_description(cmircpo.cp_one_gender) AS cp_one_gender, social_category_master_description(cmircpo.cp_one_social_category) AS cp_one_social_category, religion_master_description(cmircpo.cp_one_religion) AS cp_one_religion, cmircpo.cp_one_dob, cmircpo.cp_one_dob_document_available, cmircpo.cp_one_dob_document_id, docyment_type_master_description(cmircpo.cp_one_identity_document_type) AS cp_one_dob_document_type, cmircpo.cp_one_identity_document_available, cmircpo.cp_one_identity_document_id, docyment_type_master_description(cmircpo.cp_one_identity_document_type) AS cp_one_identity_document_type, highest_educational_attainment_master_description(cmircpo.cp_one_highest_educational_attainment) AS cp_one_highest_educational_attainment, cmircpo.cp_one_father_name, cmircpo.cp_one_father_mobile_no, cmircpo.cp_one_father_id, cmircpo.cp_one_father_id_type, cmircpo.cp_one_father_alive, cmircpo.cp_one_mother_name, cmircpo.cp_one_mother_mobile_no, cmircpo.cp_one_mother_id, cmircpo.cp_one_mother_id_type, cmircpo.cp_one_mother_alive, cmircpo.cp_one_district AS cp_one_district_id, cmircpo.cp_one_block AS cp_one_block_id, cmircpt.cp_two_name, cmircpt.cp_two_street_landmark, cmircpt.cp_two_ward_gp, cmircpt.cp_two_state, district_location_master_description(cmircpt.cp_two_district) AS cp_two_district, block_location_master_description(cmircpt.cp_two_block) AS cp_two_block, cmircpt.cp_two_pin_code, cmircpt.cp_two_police_station, cmircpt.cp_two_phone_no, gender_master_description(cmircpt.cp_two_gender) AS cp_two_gender, social_category_master_description(cmircpt.cp_two_social_category) AS cp_two_social_category, religion_master_description(cmircpt.cp_two_religion) AS cp_two_religion, cmircpt.cp_two_dob, cmircpt.cp_two_dob_document_available, cmircpt.cp_two_dob_document_id, docyment_type_master_description(cmircpt.cp_two_dob_document_type) AS cp_two_dob_document_type, cmircpt.cp_two_identity_document_available, cmircpt.cp_two_identity_document_id, docyment_type_master_description(cmircpt.cp_two_identity_document_type) AS cp_two_identity_document_type, highest_educational_attainment_master_description(cmircpt.cp_two_highest_educational_attainment) AS cp_two_highest_educational_attainment, cmircpt.cp_two_father_name, cmircpt.cp_two_father_mobile_no, cmircpt.cp_two_father_id, cmircpt.cp_two_father_id_type, cmircpt.cp_two_father_alive, cmircpt.cp_two_mother_name, cmircpt.cp_two_mother_mobile_no, cmircpt.cp_two_mother_id, cmircpt.cp_two_mother_id_type, cmircpt.cp_two_mother_alive, cmircpt.cp_two_district AS cp_two_district_id, cmircpt.cp_two_block AS cp_two_block_id FROM cm_incident_report AS cmir LEFT JOIN cm_incident_report_contracting_party_one AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk LEFT JOIN cm_incident_report_contracting_party_two AS cmircpt ON cmir.incident_id_pk = cmircpt.incident_id_fk WHERE cmir.reporting_id = '$incident_id'")->result();
+    //     // print_r($this->db->last_query());die;
+    //     return $query;
+    // }
+
+    public function dateSearchBetweenDates($start_date, $end_date)
+    {
+        $stake_holder_id_fk = $this->session->userdata('stake_holder_login_id_pk');
+
+        $district = $this->session->userdata('district');
+
+        $block = $this->session->userdata('block');
+
+        $subdiv = $this->session->userdata('subdiv');
+        
+        if($this->session->userdata('stake_id_fk') == '4' || $this->session->userdata('stake_id_fk') == '2'){
+            $query = $this->db->query("select inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date, inc.street_landmark, inc.ward_gp,
+            inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+            block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+            inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+            inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+            inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+            inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+            block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+            inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+            inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+            cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+            cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+            district_location_master_description(cp1.cp_district) AS cp_1_district,
+            block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+            cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+            gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+            cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+            cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+            cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+            cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+            cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+            cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+            cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+            cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+            cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+            cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+            district_location_master_description(cp2.cp_district) AS cp_2_district,
+            block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+            cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+            gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+            cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+            cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+            cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+            cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+            cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+            cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+            cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+            cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+            from cm_incident_report inc
+            left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+            and cp1.cp_type = 1
+            left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+            and cp2.cp_type = 2
+            where incident_id_pk in(
+            SELECT incident_id_pk FROM cm_incident_report AS cmir
+            LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+            left join cm_incident_report_cp_address_details as cp_address on cmircpo.cp_id_pk = cp_address.cp_id_fk
+            WHERE cmir.incident_date BETWEEN '$start_date' AND '$end_date' and cmir.delete_status = '0' and cmir.created_at is not null and
+                (
+                    (cmir.district = '".$district."' AND cmir.block = '".$block."' AND cmir.current_status in(2,3,4)) 
+
+                    OR (cmircpo.cp_district = '".$district."' and cmircpo.cp_block = '".$block."' AND cmir.current_status in(3,4))
+                    
+                    OR (cp_address.district = '".$district."' and cp_address.block = '".$block."' AND cmir.current_status in(3,4))
+
+                    OR (cmir.district = '".$district."' AND cmir.block = '".$block."' AND cmir.current_status in(1) AND cmir.stake_holder_id_fk = '".$stake_holder_id_fk."')
+                )
+            )")->result();
+        }elseif($this->session->userdata('stake_id_fk') == '3'){
+            $query = $this->db->query("select inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date, inc.street_landmark, inc.ward_gp,
+            inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+            block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+            inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+            inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+            inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+            inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+            block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+            inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+            inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+            cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+            cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+            district_location_master_description(cp1.cp_district) AS cp_1_district,
+            block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+            cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+            gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+            cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+            cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+            cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+            cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+            cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+            cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+            cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+            cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+            cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+            cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+            district_location_master_description(cp2.cp_district) AS cp_2_district,
+            block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+            cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+            gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+            cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+            cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+            cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+            cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+            cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+            cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+            cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+            cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+            from cm_incident_report inc
+            left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+            and cp1.cp_type = 1
+            left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+            and cp2.cp_type = 2
+            where incident_id_pk in(
+            SELECT incident_id_pk FROM cm_incident_report AS cmir
+            LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+            WHERE cmir.incident_date BETWEEN '$start_date' AND '$end_date' and cmir.delete_status = '0' and cmir.created_at is not null and
+                (
+                    (cmir.district = '".$district."' and cmir.current_status in(2,3,4)) 
+
+                    OR (cmircpo.cp_district = '".$district."' and cmir.current_status in(3,4))
+                    
+                    OR (cmir.district = '".$district."' and cmir.current_status in(1) and cmir.stake_holder_id_fk = '".$stake_holder_id_fk."')
+                )
+            )")->result();
+        }elseif($this->session->userdata('stake_id_fk') == '1' || $this->session->userdata('stake_id_fk') == '5'){
+            if($district != ''){
+                $query = $this->db->query("select inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date, inc.street_landmark, inc.ward_gp,
+                inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+                block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+                inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+                inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+                inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+                inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+                block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+                inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+                inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+                cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+                cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+                district_location_master_description(cp1.cp_district) AS cp_1_district,
+                block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+                cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+                gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+                cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+                cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+                cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+                cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+                cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+                cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+                cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+                cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+                cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+                cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+                district_location_master_description(cp2.cp_district) AS cp_2_district,
+                block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+                cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+                gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+                cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+                cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+                cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+                cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+                cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+                cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+                cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+                cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+                from cm_incident_report inc
+                left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+                and cp1.cp_type = 1
+                left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+                and cp2.cp_type = 2
+                where incident_id_pk in(
+                SELECT incident_id_pk FROM cm_incident_report AS cmir
+                LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+                WHERE cmir.incident_date BETWEEN '$start_date' AND '$end_date' and cmir.delete_status = '0' and cmir.created_at is not null and
+                    (
+                        (cmir.district = '".$district."' and cmir.current_status in(2,3,4)) 
+
+                        OR (cmircpo.cp_district = '".$district."' and cmir.current_status in(3,4))
+                    )
+                )")->result();
+             }elseif($district == ''){
+                $query = $this->db->query("select inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date, inc.street_landmark, inc.ward_gp,
+                inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+                block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+                inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+                inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+                inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+                inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+                block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+                inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+                inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+                cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+                cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+                district_location_master_description(cp1.cp_district) AS cp_1_district,
+                block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+                cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+                gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+                cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+                cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+                cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+                cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+                cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+                cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+                cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+                cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+                cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+                cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+                district_location_master_description(cp2.cp_district) AS cp_2_district,
+                block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+                cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+                gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+                cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+                cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+                cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+                cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+                cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+                cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+                cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+                cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+                from cm_incident_report inc
+                left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+                and cp1.cp_type = 1
+                left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+                and cp2.cp_type = 2
+                where incident_id_pk in(
+                SELECT incident_id_pk FROM cm_incident_report AS cmir
+                LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+                WHERE cmir.incident_date BETWEEN '$start_date' AND '$end_date' and cmir.delete_status = '0' and cmir.created_at is not null and cmir.current_status in(2,3,4))")->result();
+             }
+        }elseif($this->session->userdata('stake_id_fk') == '6'){
+            $query = $this->db->query("select block_master.rural_urban, inc.stake_holder_id_fk, inc.incident_id_pk, inc.incident_date, inc.street_landmark, inc.ward_gp,
+            inc.state, inc.district, inc.block, district_location_master_description(inc.district) AS incident_district,
+            block_location_master_description(inc.block) AS incident_block, inc.pin_code, inc.police_station,
+            inc.marriage_details AS marriage_details, inc.prevented_details AS prevented_details,
+            inc.location_description AS location_description, inc.anonymous, inc.identity_known_name,
+            inc.identity_street_landmark, inc.identity_ward_gp, inc.identity_block as identity_block_id,
+            inc.identity_state, district_location_master_description(inc.identity_district) AS identity_district,
+            block_location_master_description(inc.identity_block) AS identity_block, inc.identity_pin_code,
+            inc.identity_police_station, inc.identity_phone_no, inc.information_received AS information_received,
+            inc.reporting_id, inc.cp_two_is_available, inc.current_status, inc.delete_status, inc.created_at,
+            cp1.cp_id_pk as cp_1_id_pk, cp1.cp_type as cp_1_type, cp1.cp_name as cp_1_name, cp1.cp_street_landmark as cp_1_street_landmark,
+            cp1.cp_ward_gp as cp_1_ward_gp, cp1.cp_state as cp_1_state, state_master_description(cp1.cp_state) AS cp_1_state_name,
+            district_location_master_description(cp1.cp_district) AS cp_1_district,
+            block_location_master_description(cp1.cp_block) AS cp_1_block, cp1.cp_block AS cp_1_block_id,
+            cp1.cp_pin_code as cp_1_pin_code, cp1.cp_police_station as cp_1_police_station, cp1.cp_phone_no as cp_1_phone_no,
+            gender_master_description(cp1.cp_gender) AS cp_1_gender_value, cp1.cp_gender AS cp_1_gender,
+            cp1.cp_age as cp_1_age, cp1.cp_social_category AS cp_1_social_category, cp1.cp_religion AS cp_1_religion,
+            cp1.cp_dob as cp_1_dob, cp1.cp_dob_document_available as cp_1_dob_document_available, cp1.cp_dob_document_id as cp_1_dob_document_id,
+            cp1.cp_dob_document_type AS cp_1_dob_document_type, cp1.cp_identity_document_available as cp_1_identity_document_available,
+            cp1.cp_identity_document_id as cp_1_identity_document_id, cp1.cp_identity_document_type AS cp_1_identity_document_type,
+            cp1.cp_highest_educational_attainment AS cp_1_highest_educational_attainment, cp1.cp_father_name as cp_1_father_name,
+            cp1.cp_father_mobile_no as cp_1_father_mobile_no, cp1.cp_father_id as cp_1_father_id, cp1.cp_father_id_type as cp_1_father_id_type, cp1.cp_father_alive as cp_1_father_alive,
+            cp1.cp_mother_name as cp_1_mother_name, cp1.cp_mother_mobile_no as cp_1_mother_mobile_no, cp1.cp_mother_id as cp_1_mother_id, cp1.cp_mother_id_type as cp_mother_id_type,
+            cp1.cp_mother_alive as cp_1_mother_alive, cp1.cp_address as cp_1_address,
+            cp2.cp_id_pk as cp_2_id_pk, cp2.cp_type as cp_2_type, cp2.cp_name as cp_2_name, cp2.cp_street_landmark as cp_2_street_landmark,
+            cp2.cp_ward_gp as cp_2_ward_gp, cp2.cp_state as cp_2_state, state_master_description(cp2.cp_state) AS cp_2_state_name,
+            district_location_master_description(cp2.cp_district) AS cp_2_district,
+            block_location_master_description(cp2.cp_block) AS cp_2_block, cp2.cp_block AS cp_2_block_id,
+            cp2.cp_pin_code as cp_2_pin_code, cp2.cp_police_station as cp_2_police_station, cp2.cp_phone_no as cp_2_phone_no,
+            gender_master_description(cp2.cp_gender) AS cp_2_gender_value, cp2.cp_gender AS cp_2_gender,
+            cp2.cp_age as cp_2_age, cp2.cp_social_category AS cp_2_social_category, cp2.cp_religion AS cp_2_religion,
+            cp2.cp_dob as cp_2_dob, cp2.cp_dob_document_available as cp_2_dob_document_available, cp2.cp_dob_document_id as cp_2_dob_document_id,
+            cp2.cp_dob_document_type AS cp_2_dob_document_type, cp2.cp_identity_document_available as cp_2_identity_document_available,
+            cp2.cp_identity_document_id as cp_2_identity_document_id, cp2.cp_identity_document_type AS cp_2_identity_document_type,
+            cp2.cp_highest_educational_attainment AS cp_2_highest_educational_attainment, cp2.cp_father_name as cp_2_father_name,
+            cp2.cp_father_mobile_no as cp_2_father_mobile_no, cp2.cp_father_id as cp_2_father_id, cp2.cp_father_id_type as cp_2_father_id_type, cp2.cp_father_alive as cp_2_father_alive,
+            cp2.cp_mother_name as cp_2_mother_name, cp2.cp_mother_mobile_no as cp_2_mother_mobile_no, cp2.cp_mother_id as cp_2_mother_id, cp2.cp_mother_id_type as cp_2_mother_id_type,
+            cp2.cp_mother_alive as cp_2_mother_alive, cp2.cp_address as cp_2_address
+            from cm_incident_report inc
+            left join cm_incident_report_contracting_parties AS cp1 ON inc.incident_id_pk = cp1.incident_id_fk
+            and cp1.cp_type = 1
+            left join cm_incident_report_contracting_parties AS cp2 ON inc.incident_id_pk = cp2.incident_id_fk
+            and cp2.cp_type = 2
+
+            left join rp_location_master_block as block_master on inc.block = block_master.block_id_pk
+            
+            where incident_id_pk in(
+            SELECT incident_id_pk FROM cm_incident_report AS cmir
+            LEFT JOIN cm_incident_report_contracting_parties AS cmircpo ON cmir.incident_id_pk = cmircpo.incident_id_fk
+            left join cm_incident_report_cp_address_details as cp_address on cmircpo.cp_id_pk = cp_address.cp_id_fk
+
+            WHERE cmir.incident_date BETWEEN '$start_date' and '$end_date' and cmir.delete_status = '0' and cmir.created_at is not null and
+                (
+                    (cmir.district = '".$district."' and cmir.block in (select block_id_pk from rp_location_master_block where subdiv_id_fk = '".$subdiv."') and cmir.current_status in(2,3,4)) 
+
+                    OR (cmircpo.cp_district = '".$district."' and cmircpo.cp_block in (select block_id_pk from rp_location_master_block where subdiv_id_fk = '".$subdiv."') and cmir.current_status in(3,4))
+                    
+                    OR (cp_address.district = '".$district."' and cp_address.block in (select block_id_pk from rp_location_master_block where subdiv_id_fk = '".$subdiv."') and cmir.current_status in(3,4))
+                )
+            )")->result();
+        }
+        // print_r($this->db->last_query());die;
+        return $query;
+    }
+    
+    public function delete_incident_list($incident_id)
+    {
+        $upload = array(
+            'delete_status' => 1
+        );
+        $this->db->where('incident_id_pk', $incident_id)->update('cm_incident_report', $upload);
+    }
+    
+    public function us_date_format($uk_date=NULL)
+    {
+       if($uk_date != NULL){
+          $date_array = explode('/', $uk_date);
+          return $date_array[2].'-'.$date_array[1].'-'.$date_array[0];
+       } else {
+          return NULL;
+       }
+    }
+}
+?>
